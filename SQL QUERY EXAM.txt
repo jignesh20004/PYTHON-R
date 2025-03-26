@@ -1,0 +1,132 @@
+﻿CREATE TABLE Customers (
+CustomersID int,
+Name varchar (30),
+Email varchar (30),
+Address varchar (30)
+);
+
+
+insert into Customers
+(CustomersID,Name,Email,Address)
+values
+(1,"Raj Rajput","Raj1@gmail.com","Delhi,India "),
+(2,"Sujal Rajput","Sujal2@gmail.com","Mumbai,India "),
+(3,"Umar Khan","Umar3@gmail.com","Jaipur,India "),
+(4,"Alice Shah","Alice4@gmail.com","Lucknow,India "),
+(5,"Amit Mishra","Amit5@gmail.com","Hyderabad,India ");
+
+
+
+
+select * from Customers 
+
+
+UPDATE customers SET Address="Mumbai, India" WHERE CustomersID=1;
+
+
+delete from customers where CustomersID = 5;
+
+
+select * from customers where Name = 'Alice Shah';
+
+
+
+
+===================================================================
+CREATE TABLE Orders (
+    OrderID INT PRIMARY KEY, 
+    CustomerID INT , 
+    OrderDate DATE , 
+    TotalAmount DECIMAL(10,2) 
+);
+
+
+INSERT INTO Orders (OrderID, CustomerID, OrderDate, TotalAmount)
+VALUES
+(101, 2121, '2025-03-05', 700.00),
+(102, 2122, '2025-03-10', 1500.50),
+(103, 2123, '2025-03-19', 1000.75),
+(104, 2124, '2025-03-25', 1500.00),
+(105, 2125, '2025-03-28', 800.25);
+SELECT * FROM Orders WHERE CustomerID = 2121;
+
+
+UPDATE Orders SET TotalAmount = 1900.00 WHERE OrderID = 104;
+
+
+DELETE FROM Orders WHERE OrderID = 105;
+
+
+SELECT * FROM Orders WHERE OrderDate >= CURDATE() - INTERVAL 30 DAY;
+
+
+SELECT 
+    MAX(TotalAmount) AS HighestAmount,
+    MIN(TotalAmount) AS LowestAmount,
+    AVG(TotalAmount) AS AverageAmount
+FROM Orders;
+
+
+===================================================================
+
+
+CREATE TABLE Products (
+    ProductID INT PRIMARY KEY,
+    ProductName VARCHAR(40) NOT NULL,
+    Price DECIMAL(10,2) NOT NULL,
+    Stock INT 
+);
+INSERT INTO Products (ProductID, ProductName, Price, Stock) 
+VALUES 
+(1, 'Laptop', 55000, 50),
+(2, 'Smartphone', 35000, 100),
+(3, 'Headphones', 20000, 50),
+(4, 'Smartwatch', 5000, 25),
+(5, 'Tablet', 28000, 15);
+
+
+SELECT * FROM Products ORDER BY Stock DESC;
+UPDATE Products SET Price = 17000 WHERE ProductID = 3;
+DELETE FROM Products WHERE Stock = 15;
+SELECT * FROM Products WHERE Price BETWEEN 17000 AND 35000;
+
+
+SELECT 
+    (SELECT ProductName FROM Products WHERE Price = (SELECT MAX(Price) FROM Products)) AS Most_Expensive_Product,
+    (SELECT ProductName FROM Products WHERE Price = (SELECT MIN(Price) FROM Products)) AS Cheapest_Product;
+
+
+
+
+===================================================================
+CREATE TABLE OrderDetails (
+    OrderDetailID INT PRIMARY KEY,
+    OrderID INT,
+    ProductID INT,
+    Quantity INT ,
+    SubTotal DECIMAL(10,2)
+);
+INSERT INTO OrderDetails (OrderDetailID, OrderID, ProductID, Quantity, SubTotal) 
+VALUES 
+(101, 2121, 453, 1, 55000.23),
+(201, 2122, 354, 2, 3000.43),
+(301, 2123, 435, 1, 20000.65),
+(401, 2124, 678, 1, 15000.23),
+(501, 2125, 879, 2, 36000.45);
+
+
+SELECT * FROM OrderDetails WHERE OrderID = 2121;
+SELECT SUM(SubTotal) AS Total_Revenue FROM OrderDetails;
+
+
+SELECT ProductID, SUM(Quantity) AS TotalOrdered 
+FROM OrderDetails 
+GROUP BY ProductID 
+ORDER BY TotalOrdered DESC 
+LIMIT 3;
+
+
+SELECT ProductID, COUNT(*) AS TotalSales 
+FROM OrderDetails 
+WHERE ProductID = 453 
+GROUP BY ProductID;
