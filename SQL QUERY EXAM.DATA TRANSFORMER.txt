@@ -1,0 +1,187 @@
+﻿CREATE TABLE customers (
+    customerID INT PRIMARY KEY,
+    first_name VARCHAR(50),
+    last_name VARCHAR(50),
+    email VARCHAR(100),
+    registrationDate DATE
+);
+
+
+
+
+INSERT INTO customers (customerID, first_name, last_name, email, registrationDate)
+ VALUES
+(40, 'rahul', 'varma', 'rahul.varma@example.com', '2023-05-10'),
+(41, 'jeet', 'singh', 'jeet.singh@example.com', '2022-11-22'),
+(42, 'jolly', 'kapoor', 'jolly.kapoor@example.com', '2023-01-15'),
+(43, 'adam', 'chauhan', 'adam.chauhan@example.com', '2024-02-05');
+
+
+========================================================================
+
+
+CREATE TABLE orders (
+    orderID INT PRIMARY KEY,
+    customerID INT,
+    orderDate DATE,
+    total_Amount DECIMAL(10, 2),
+    FOREIGN KEY (customerID) REFERENCES customers(customerID)
+);
+
+
+INSERT INTO orders (orderID, customerID, orderDate, total_Amount)
+ VALUES
+(101, 40, '2024-03-15', 1200.00),
+(102, 41, '2024-03-17', 800.00),
+(103, 42, '2024-03-18', 400.00),
+(104, 40, '2024-03-20', 1500.00),
+(105, 43, '2024-03-25', 600.00);
+
+
+========================================================================
+
+
+CREATE TABLE employees (
+    employeeID INT PRIMARY KEY,
+    first_name VARCHAR(50),
+    last_name VARCHAR(50),
+    department VARCHAR(50),
+    hireDate DATE,
+    salary DECIMAL(10, 2)
+);
+INSERT INTO employees (employeeID, first_name, last_name, department, hireDate, salary)
+ VALUES
+(1, 'isha', 'gupta', 'Sales', '2021-01-10', 60000.00),
+(2, 'kabir', 'yadav', 'IT', '2022-06-15', 75000.00),
+(3, 'arjun', 'mishra', 'Marketing', '2023-03-01', 50000.00),
+(4, 'karthik', 'menon', 'Sales', '2021-10-20', 82000.00),
+(5, 'Eva', 'Green', 'HR', '2020-08-05', 45000.00);
+
+
+========================================================================
+
+
+INNER JOIN
+
+
+SELECT o.orderID, o.orderDate, o.total_Amount, c.first_name, c.last_name
+FROM orders o
+INNER JOIN customers c ON o.customerID = c.customerID;
+
+
+LEFT JOIN
+
+
+SELECT c.customerID, c.first_name, o.orderID, o.total_Amount
+FROM customers c
+LEFT JOIN orders o ON c.customerID = o.customerID;
+
+
+RIGHT JOIN
+
+
+SELECT o.orderID, o.total_Amount, c.first_name, c.last_name
+FROM orders o
+RIGHT JOIN customers c ON o.customerID = c.customerID;
+
+
+FULL OUTER JOIN
+
+
+SELECT c.customerID, c.first_name, o.orderID, o.total_Amount
+FROM customers c
+LEFT JOIN orders o ON c.customerID = o.customerID
+UNION
+SELECT c.customerID, c.first_name, o.orderID, o.total_Amount
+FROM customers c
+RIGHT JOIN orders o ON c.customerID = o.customerID;
+========================================================================
+[5]
+SELECT DISTINCT c.*
+FROM customers c
+JOIN orders o ON c.customerID = o.customerID
+WHERE o.total_Amount > (SELECT AVG(total_Amount) FROM orders);
+
+
+[6]
+SELECT *
+FROM employees
+WHERE salary > (SELECT AVG(salary) FROM employees);
+========================================================================
+[7]
+SELECT orderID, 
+       YEAR(orderDate) AS order_year, 
+       MONTH(orderDate) AS order_month
+FROM orders;
+
+
+========================================================================
+[8]
+SELECT orderID, DATEDIFF(CURDATE(), orderDate) AS days_difference
+FROM orders;
+
+
+========================================================================
+[9]
+SELECT orderID, DATE_FORMAT(orderDate, '%d-%b-%Y') AS formatted_date
+FROM orders;
+
+
+========================================================================
+[10]
+SELECT CONCAT(first_name, ' ', last_name) AS full_name
+FROM customers;
+
+
+========================================================================
+[11]
+SELECT REPLACE(first_name, 'rahul', 'Jonathan') AS updated_name
+FROM customers;
+
+
+========================================================================
+[12]
+SELECT UPPER(first_name) AS upper_first, LOWER(last_name) AS lower_last
+FROM customers;
+
+
+========================================================================
+[13]
+SELECT TRIM(email) AS cleaned_email
+FROM customers;
+
+
+========================================================================
+
+
+
+
+[14]
+SELECT orderID, total_Amount,
+       SUM(total_Amount) OVER (ORDER BY orderDate) AS running_total
+FROM orders;
+========================================================================
+
+
+
+
+[15]
+SELECT orderID, total_Amount,
+       RANK() OVER (ORDER BY total_Amount DESC) AS rank_by_amount
+FROM orders;
+
+
+========================================================================
+[16]
+SELECT orderID, total_Amount,
+       IF(total_Amount > 1000, '10% Off',
+          IF(total_Amount > 500, '5% Off', 'No Discount')) AS discount
+FROM orders;
+
+
+========================================================================
+[17]
+SELECT employeeID, first_name, salary,
+       IF(salary >= 75000, 'High',
+          IF(salary >= 50000, 'Medium', 'Low')) AS salary_category
+FROM employees;
