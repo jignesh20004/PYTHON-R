@@ -183,7 +183,7 @@ WHERE e.CourseID IN (1, 2);
 SELECT AVG(Credits) as AverageCredits FROM Courses;
 ========================================================================
 [8]
-Without a Salaries table, this query cannot be executed.
+This query is done in last
 ========================================================================
 [9]
 SELECT d.DepartmentName, COUNT(DISTINCT e.StudentID) as StudentCount
@@ -243,3 +243,18 @@ SELECT
     s.LastName,
     IF(DATEDIFF('2025-04-09', s.EnrollmentDate) / 365 > 4, 'Senior', 'Junior') as StudentLevel
 FROM Students s;
+
+
+[8]
+ALTER TABLE Instructors ADD Salary INT;
+UPDATE Instructors SET Salary = 80000 WHERE InstructorID = 1;
+UPDATE Instructors SET Salary = 75000 WHERE InstructorID = 2;
+UPDATE Instructors SET Salary = 90000 WHERE InstructorID = 3;
+UPDATE Instructors SET Salary = 70000 WHERE InstructorID = 4;
+SELECT MAX(Salary) AS MaxSalary
+FROM Instructors
+WHERE DepartmentID = (
+    SELECT DepartmentID
+    FROM Departments
+    WHERE DepartmentName = 'Computer Science'
+);
